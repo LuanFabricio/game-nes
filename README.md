@@ -2,6 +2,8 @@
 Base de um jogo para NES.
 
 # Compilando o projeto
+Baixe e instale o compilador [cc65](https://cc65.github.io/getting-started.html).
+
 Adicione CL65 como uma variável de ambiente.
 ```sh
 export CL65=path/to/cl65
