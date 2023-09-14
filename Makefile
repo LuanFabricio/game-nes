@@ -1,4 +1,4 @@
-CC=~/git_libs/cc65/bin/cl65
+CC=$CL65
 FILENAME=main
 FLAGS=--verbose --target nes
 
