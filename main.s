@@ -195,19 +195,14 @@ check_ball_y_position:
     cmp #$06
     bne check_ball_x_position
     inc $02
-    lda $03
-    lsr
-    asl         ; setting 0 to first bit
-    sta $03
-    jmp check_ball_x_position
+    jmp check_ball_y_position_flip
   check_down_position:
     lda $02
     cmp #$e0
     bne check_ball_x_position
     dec $02
-    lda $03
-    ora #$01
-    sta $03
+  check_ball_y_position_flip:
+    jsr flip_ball_y
 
 check_ball_x_position:
   check_right_position:
@@ -219,41 +214,22 @@ check_ball_x_position:
     cmp #$fa
     bne check_ball_x_position_end
     dec $01
-    lda $03
-    and #%01
-    sta $03
-    jmp end
+    jsr flip_ball_x
+    jmp check_ball_x_position_end
   check_left_position:
     lda $01
     cmp #$06
     bne check_ball_x_position_end
     inc $01
-    lda $03
-    ora #%10
-    sta $03
+  check_ball_x_position_flip:
+    jsr flip_ball_x
+
 check_ball_x_position_end:
 
-check_player_collision:
-  ;; player x       - 2
-  ;; player width   - 2p
-  ;; player height  - 24p
-  lda $00               ; loading player's y position
-  lda #$02               ; loading player's x position
-  ldx $01               ; loading ball's x
-  ldy $02               ; loading ball's y
-
-  sta $0100
-
-  cmp $0100, x
-  bcs call_flip_ball_x
-  jmp check_player_collision_end
-
-call_flip_ball_x:
-  jsr flip_ball_x
-
-check_player_collision_end:
+  jsr check_player_collision
   rti
 
+;; Subroutine to flip ball x direction
 flip_ball_x:
   lda $03           ; loading ball direction
   and #%10
@@ -269,6 +245,52 @@ set_ball_right:
   ora #%10
   sta $03
 end:
+  rts
+
+;; Subroutine to flip ball y direction
+flip_ball_y:
+  lda $03           ; loading ball direction
+  and #%01
+  cmp #%01
+  bne set_ball_up
+set_ball_down:
+  lda $03
+  and #%10
+  sta $03
+  jmp flip_ball_y_end
+set_ball_up:
+  lda $03
+  ora #%01
+  sta $03
+flip_ball_y_end:
+  rts
+
+check_player_collision:
+  check_x_collision:
+    lda $01             ; loading ball x position
+    cmp #$08            ; ball_x == player_x
+    bne check_player_collision_end
+    lda $00
+    ldx #$00
+  check_y_collision:
+    cmp $02
+    bcc check_next_part
+    jsr flip_ball_x
+    jsr add_score
+    jmp check_player_collision_end
+  check_next_part:
+    clc
+    adc #$08
+    inx
+    cpx #$03
+    bne check_y_collision
+
+check_player_collision_end:
+  rts
+
+;; subroutine do increment player's score
+add_score:
+  inc $04
   rts
 
 hello:
