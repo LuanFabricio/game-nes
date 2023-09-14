@@ -1,4 +1,4 @@
-CC=$CL65
+CC=$(CL65)
 FILENAME=main
 FLAGS=--verbose --target nes
 
