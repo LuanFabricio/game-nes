@@ -272,17 +272,19 @@ check_player_collision:
     bne check_player_collision_end
     lda $00
     ldx #$00
+    clc
   check_y_collision:
     cmp $02
-    bcc check_next_part
+    bne check_next_part
     jsr flip_ball_x
     jsr add_score
     jmp check_player_collision_end
   check_next_part:
     clc
-    adc #$08
+    adc #$01
+    clc
     inx
-    cpx #$03
+    cpx #$10
     bne check_y_collision
 
 check_player_collision_end:
