@@ -15,7 +15,7 @@ make
 Pronto, agora você tem a rom `main.nes`.
 
 # Compilando e executando a rom
-Instale o emulador de NES ![fceux](https://fceux.com/web/home.html).
+Instale o emulador de NES [fceux](https://fceux.com/web/home.html).
 
 Execute o script `run`.
 ```sh
