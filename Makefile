@@ -1,9 +1,11 @@
-CC=$(CL65)
+CA=ca65
+LD=ld65
 FILENAME=main
-FLAGS=--verbose --target nes
+LD_FLAGS=--target nes
 
 all:
-	$(CC) $(FILENAME).s $(FLAGS) -o $(FILENAME).nes
+	$(CA) $(FILENAME).s
+	$(LD) $(FILENAME).o $(LD_FLAGS) -o $(FILENAME).nes
 
 run:
 	make
