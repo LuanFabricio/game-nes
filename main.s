@@ -1,3 +1,9 @@
+PPUCTRL = $2000
+PPUMASK = $2001
+PPUSTATUS = $2002
+PPUADDR = $2006
+PPUDATA = $2007
+
 .segment "HEADER"
   .byte $4E, $45, $53, $1A ; iNES header identifier ("NES", $1A)
   .byte 2             		 ; 2x 16KB PRG code
@@ -17,17 +23,17 @@
 ; Main code segment
 .segment "CODE"
 
-reset:
-  sei         ; disable IRQs
-  cld         ; disable decimal mode
+.proc reset
+  sei           ; disable IRQs
+  cld           ; disable decimal mode
   ldx #$40
-  stx $4017   ; disable APU frame IRQ
-  ldx #$ff    ; Set up stack
+  stx $4017     ; disable APU frame IRQ
+  ldx #$ff      ; Set up stack
   txs
-  inx         ; 0xff -> 0x00
-  stx $2000   ; disable NMI
-  stx $2001   ; disable rendering
-  stx 4010    ; disable DMC IRQs
+  inx           ; 0xff -> 0x00
+  stx PPUCTRL   ; disable NMI
+  stx PPUMASK   ; disable rendering
+  stx 4010      ; disable DMC IRQs
 
 ;; first wait for vblank (to make sure the PPU is ready)
 vblankwait1:
@@ -46,8 +52,9 @@ clear_memory:
   sta $0700, x
   inx
   bne clear_memory
+.endproc
 
-main:
+.proc main
   lda #$6f
   sta $00 ; store player's y
   sta $02 ; store balls's y
@@ -81,6 +88,7 @@ enable_rendering:
 ;; Infinite loop
 forever:
   jmp forever
+.endproc
 
 nmi:
   ldx #$00          ; Set SPR_RAM address to 0
